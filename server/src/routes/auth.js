@@ -16,7 +16,6 @@ router.get("/", (req, res, next) => {
 /**
  * Creates new user
  */
-// http://localhost:3000/api/auth/create
 router.post("/create", async (req, res, next) => {
 	try {
 		const email = req.body.email;
