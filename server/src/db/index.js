@@ -63,7 +63,7 @@ db.createUser = (userData) => {
 	});
 };
 
-db.findUserByEmail = (email) => {
+db.isUserExistWithEmail = (email) => {
 	return new Promise((resolve, reject) => {
 		pool.query(`SELECT * FROM users where email = ?`, [email], (err, results) => {
 			if (err) {

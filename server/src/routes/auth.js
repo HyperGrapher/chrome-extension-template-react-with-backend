@@ -70,7 +70,7 @@ router.post("/create", async (req, res, next) => {
 			return;
 		}
 
-		if (await db.findUserByEmail(email)) {
+		if (await db.isUserExistWithEmail(email)) {
 			res.status(400).json({ message: "user already exists" });
 			return;
 		}
@@ -123,7 +123,7 @@ router.post("/login", async (req, res, next) => {
 			return;
 		}
 
-		if (!(await db.findUserByEmail(email))) {
+		if (!(await db.isUserExistWithEmail(email))) {
 			res.status(400).json({ message: "wrong credentials" });
 			return;
 		}
