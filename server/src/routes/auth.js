@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 /**
  * sanity check
  */
-// http://localhost:3000/api/auth
+// http://localhost:{port}/api/auth
 router.get("/", (req, res, next) => {
 	res.json({ message: "Hello Kitty! from auth" });
 });
@@ -26,7 +26,7 @@ router.post("/create", async (req, res, next) => {
 			return;
 		}
 
-		// check email is valid using regex
+		// check if email is valid using regex
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!emailRegex.test(email)) {
 			res.status(400).json({ message: "email is not valid" });
