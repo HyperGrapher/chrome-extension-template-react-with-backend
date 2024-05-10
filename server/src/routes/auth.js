@@ -12,19 +12,6 @@ router.get("/", (req, res, next) => {
 	res.json({ message: "Hello Kitty! from auth" });
 });
 
-/**
- * Get single post with ID
- */
-// http://localhost:3000/api/posts/5
-router.get("/user/:id", async (req, res, next) => {
-	try {
-		let result = await db.single(req.params.id);
-		res.json(result);
-	} catch (error) {
-		console.log(error);
-		res.sendStatus(500);
-	}
-});
 
 /**
  * Creates new user
