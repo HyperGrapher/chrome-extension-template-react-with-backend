@@ -13,6 +13,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { useState } from 'react';
 
 const formSchema = z.object({
     email: z.string().email({
@@ -29,7 +30,8 @@ const formSchema = z.object({
 const AuthLogin = () => {
 
     const setUser = useAuthStore((state) => state.setUser);
-    
+    const [loading, setLoading] = useState(false);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -39,11 +41,15 @@ const AuthLogin = () => {
     })
 
     const onSubmit = (values: z.infer<typeof formSchema>) => {
+
+        setLoading(true);
+
         publicAxios.post('/auth/login', values)
             .then((res) => {
                 if (res.status === 200) setUser(parseAuthResponse(res));
             })
             .catch((err) => {
+                setLoading(false);
 
                 if (err.response.data.errType.includes('email')) {
                     form.setError('email', {
@@ -70,7 +76,7 @@ const AuthLogin = () => {
                             <FormItem className="relative">
                                 <FormLabel className='text-zinc-400'>Email</FormLabel>
                                 <FormControl>
-                                    <Input className='text-zinc-200' placeholder="Email" {...field} type='email' />
+                                    <Input disabled={loading} className='text-zinc-200' placeholder="Email" {...field} type='email' />
                                 </FormControl>
                                 <FormMessage className='absolute text-[0.7rem]' />
                             </FormItem>
@@ -84,7 +90,7 @@ const AuthLogin = () => {
                             <FormItem className="relative">
                                 <FormLabel className='text-zinc-400'>Password</FormLabel>
                                 <FormControl>
-                                    <Input className='text-zinc-200' placeholder="Password" {...field} type='password' />
+                                    <Input disabled={loading} className='text-zinc-200' placeholder="Password" {...field} type='password' />
                                 </FormControl>
                                 <FormMessage className='absolute text-[0.7rem]' />
                             </FormItem>
@@ -92,7 +98,7 @@ const AuthLogin = () => {
                     />
 
                     <div className='w-full pt-2'>
-                        <Button className='w-full' type='submit'>Login</Button>
+                        <Button disabled={loading} className='w-full' type='submit'>Login</Button>
                     </div>
                 </form>
             </Form>
