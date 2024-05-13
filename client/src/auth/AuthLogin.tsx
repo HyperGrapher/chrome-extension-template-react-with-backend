@@ -43,7 +43,19 @@ const AuthLogin = () => {
             .then((res) => {
                 if (res.status === 200) setUser(parseAuthResponse(res));
             })
-            .catch((err) => console.error(err.response.data))
+            .catch((err) => {
+
+                if (err.response.data.errType.includes('email')) {
+                    form.setError('email', {
+                        message: err.response.data.message,
+                    })
+                }
+                if (err.response.data.errType.includes('password')) {
+                    form.setError('password', {
+                        message: err.response.data.message,
+                    })
+                }
+            })
     }
 
     return (
@@ -60,7 +72,7 @@ const AuthLogin = () => {
                                 <FormControl>
                                     <Input className='text-zinc-200' placeholder="Email" {...field} type='email' />
                                 </FormControl>
-                                <FormMessage className='absolute' />
+                                <FormMessage className='absolute text-[0.7rem]' />
                             </FormItem>
                         )}
                     />
@@ -74,7 +86,7 @@ const AuthLogin = () => {
                                 <FormControl>
                                     <Input className='text-zinc-200' placeholder="Password" {...field} type='password' />
                                 </FormControl>
-                                <FormMessage className='absolute' />
+                                <FormMessage className='absolute text-[0.7rem]' />
                             </FormItem>
                         )}
                     />
