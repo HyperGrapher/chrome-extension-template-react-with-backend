@@ -44,10 +44,8 @@ const App = () => {
 
 
 	return (
-		<div className="bg-gray-700 w-80 min-h-96 mx-auto">
-
+		<div className="bg-zinc-700 w-80 min-h-64 p-4 mx-auto">
 			<AuthComp />
-
 		</div>
 	)
 }

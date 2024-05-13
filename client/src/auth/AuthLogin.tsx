@@ -1,15 +1,45 @@
-import React, { FormEvent } from 'react'
-import { publicAxios, parseAuthResponse } from '../service/axios.config';
-import useAuthStore from '../service/auth.store';
+import { publicAxios, parseAuthResponse } from '@/service/axios.config';
+import useAuthStore from '@/service/auth.store';
+import { Button } from '@/components/ui/button';
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+
+const formSchema = z.object({
+    email: z.string().email({
+        message: "Must be a valid email.",
+    }),
+    password: z.string().min(8, {
+        message: "Must be at least 8 characters.",
+    }).max(128, {
+        message: "Must be maximum 128 characters.",
+    }),
+})
+
 
 const AuthLogin = () => {
 
-    const [formData, setFormData] = React.useState({ email: '', password: '' });
     const setUser = useAuthStore((state) => state.setUser);
+    
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    })
 
-    const onSubmit = (e: FormEvent) => {
-        e.preventDefault()
-        publicAxios.post('/auth/login', formData)
+    const onSubmit = (values: z.infer<typeof formSchema>) => {
+        publicAxios.post('/auth/login', values)
             .then((res) => {
                 if (res.status === 200) setUser(parseAuthResponse(res));
             })
@@ -17,17 +47,43 @@ const AuthLogin = () => {
     }
 
     return (
-        <div>
-            <div className='mt-16'>
+        <div className='w-full'>
             <h1 className="text-2xl font-bold text-slate-200 mb-4 text-center">Login</h1>
-                <form onSubmit={onSubmit} className='flex flex-col items-center justify-center gap-4'>
-                    <input type={"email"} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-                    <input type={"password"} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
-                    <div className='w-full'>
-                        <button className='bg-green-600 px-4 py-1 rounded-md text-white w-full' type='submit'>Login</button>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 w-64'>
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem className="relative">
+                                <FormLabel className='text-zinc-400'>Email</FormLabel>
+                                <FormControl>
+                                    <Input className='text-zinc-200' placeholder="Email" {...field} type='email' />
+                                </FormControl>
+                                <FormMessage className='absolute' />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem className="relative">
+                                <FormLabel className='text-zinc-400'>Password</FormLabel>
+                                <FormControl>
+                                    <Input className='text-zinc-200' placeholder="Password" {...field} type='password' />
+                                </FormControl>
+                                <FormMessage className='absolute' />
+                            </FormItem>
+                        )}
+                    />
+
+                    <div className='w-full pt-2'>
+                        <Button className='w-full' type='submit'>Login</Button>
                     </div>
                 </form>
-            </div>
+            </Form>
         </div>
     )
 }
